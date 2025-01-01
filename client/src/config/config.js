@@ -1,7 +1,7 @@
 import { Client, Storage } from "appwrite";
 
 const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1')
-    .setProject('67712c81003dc4b0188c');
+    .setEndpoint(import.meta.env.VITE_APPWRITE_PROJECTENDPOINT)
+    .setProject(import.meta.env.VITE_APPWRITE_PROJECTID);
 
 export const storage = new Storage(client);

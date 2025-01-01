@@ -9,7 +9,6 @@ function NavBar() {
  const handleLogout = (e)=>{
    localStorage.removeItem('token')
    navigate('/login')
-   
  }
   return (
  
