@@ -1,0 +1,20 @@
+ export const optionValuesOfCategories = [
+    "music",
+    "sports",
+    "food",
+    "tech",
+    "arts",
+    "outdoors",
+    "film",
+    "fashion",
+    "health",
+    "science",
+    "travel",
+    "community",
+    "family",
+    "holiday",
+    "home",
+    "auto",
+    "other",
+  ];
+

@@ -1,7 +1,11 @@
 
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 function Profile(){
+    const user = useSelector((store) => store.authSlice.user);
+
+    console.log(user.data,'userData');
     return (
         <div
       className="d-flex justify-content-center align-items-center"
@@ -16,7 +20,7 @@ function Profile(){
         {/* Profile Picture */}
         <div className="text-center mb-4">
           <img
-            src={"https://via.placeholder.com/150"}
+            src={user.data.imageURL}
             alt="Profile"
             className="rounded-circle shadow"
             style={{
@@ -29,12 +33,12 @@ function Profile(){
 
         {/* User Information */}
         <div className="mb-3">
-          <h4>Name:</h4>
+          <h4>Name:{user.data.name}</h4>
           <p className="text-muted"> Not Available</p>
         </div>
 
         <div className="mb-3">
-          <h4>Email:</h4>
+          <h4>Email: {user.data.email}</h4>
           <p className="text-muted"> Not Available</p>
         </div>
 

@@ -1,6 +1,7 @@
 import{React,useState }from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch,useSelector } from 'react-redux'
 import { createEvent } from '../../store/slices/eventSlice'
+import { optionValuesOfCategories } from '../../constants/constants'
 
 
 function CreateEvents() {
@@ -34,6 +35,8 @@ function CreateEvents() {
     setLocation(""),
     setVisibility("")
   }
+
+  
   return (
     <div style={{display:'flex',justifyContent:'center',alignItems:'center',margin:'5% 0% 5% 0%' }}>
     <div className="event-form-container p-5 bg-white rounded shadow-lg w-75">
@@ -118,22 +121,9 @@ function CreateEvents() {
           >
             <option value="" disabled>Select a category</option>
             <option value="music">Music</option>
-            <option value="sports">Sports</option>
-            <option value="food">Food</option>
-            <option value="tech">Tech</option>
-            <option value="arts">Arts</option>
-            <option value="outdoors">Outdoors</option>
-            <option value="film">Film</option>
-            <option value="fashion">Fashion</option>
-            <option value="health">Health</option>
-            <option value="science">Science</option>
-            <option value="travel">Travel</option>
-            <option value="community">Community</option>
-            <option value="family">Family</option>
-            <option value="holiday">Holiday</option>
-            <option value="home">Home</option>
-            <option value="auto">Auto</option>
-            <option value="other">Other</option>
+           { optionValuesOfCategories?.map((category,index) => {
+            return <option key={index} value={category}>{category}</option>
+            })}
           </select>
         </div>
       </div>

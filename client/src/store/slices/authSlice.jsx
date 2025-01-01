@@ -12,6 +12,43 @@ const api = axios.create({
     },
 });
 
+
+//Async thunk for getting the current user
+
+export const validateToken = createAsyncThunk(
+    "auth/validateToken",
+    async (_, { rejectWithValue }) => {
+
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+        try {
+
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/validateToken`,{
+                headers: {
+                    Authorization:token, // Set the token in the header
+                },
+            } )
+            console.log(response.data, "response user"); // Log the response
+            const user = response.data; // Extract user data from response
+            console.log(user, "user"); // Log the user data
+            console.log(user.data.imageURL, "user"); // Log the user data
+            const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID; // Bucket ID from environment variables
+            user.data.imageURL = storage.getFileView(bucketId,user.data.imageURL); // Add the image URL to the response data
+            console.log(user, "user"); // Log the user data
+            return user; // Return the user data
+
+
+            
+        } catch (error) {
+            // Handle errors by rejecting with the error message
+            return rejectWithValue(
+                error.response?.data?.message || error.message
+            );
+
+            
+        }
+    }
+)
+
 // Async thunk for registering a user
 export const registerUser = createAsyncThunk(
     "auth/registerUser",
@@ -39,6 +76,10 @@ export const registerUser = createAsyncThunk(
             toast.success(response.data.message); // Display success message
             console.log(response.data, "response user"); // Log the response
 
+            
+
+           response.data.imageURL = storage.getFileView(bucketId,response.data.imageURL); // Add the image URL to the response data
+
             return response.data; // Return the response data
         } catch (error) {
             // Handle errors by rejecting with the error message
@@ -58,6 +99,11 @@ export const loginUser = createAsyncThunk(
             const response = await api.post("/auth/login", data); // API call to log in user
 
             const user = response.data; // Extract user data from response
+            console.log(user, "user"); // Log the user data
+            console.log(user.data.imageURL, "user"); // Log the user data
+            const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID; // Bucket ID from environment variables
+            user.data.imageURL = storage.getFileView(bucketId,user.data.imageURL); // Add the image URL to the response data
+            console.log(user, "user"); // Log the user data
 
             // Save the token to localStorage
             localStorage.setItem("token", user.data.token);
@@ -83,19 +129,16 @@ export const authSlice = createSlice({
         user: null, // Store user data
         loading: false, // Loading state for async actions
         error: null, // Store any errors
+        token: localStorage.getItem("token") || null, // Store the token from localStorage
     },
     reducers: {
-        // Reducer for manual login
-        login: (state, action) => {
-            state.isAuthenticated = true;
-            state.user = action.payload;
-            state.loading = false;
-        },
+       
         // Reducer for logging out
-        logout: (state) => {
+        logout: (state,action) => {
             state.isAuthenticated = false;
             state.user = null;
-            state.loading = false;
+            state.token = null;
+            localStorage.removeItem("token");
         },
     },
     extraReducers: (builder) => {
@@ -131,6 +174,24 @@ export const authSlice = createSlice({
             state.loading = false;
             state.isAuthenticated = false;
         });
+        // Handle pending state for validateToken
+        builder.addCase(validateToken.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        // Handle fulfilled state for validateToken
+        builder.addCase(validateToken.fulfilled, (state, action) => {
+            state.user = action.payload;
+            state.isAuthenticated = true;
+            state.loading = false;
+        });
+        // Handle rejected state for validateToken
+        builder.addCase(validateToken.rejected, (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+            state.isAuthenticated = false;
+        });
+        
     },
 });
 

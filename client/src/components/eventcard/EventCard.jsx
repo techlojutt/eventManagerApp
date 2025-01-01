@@ -2,7 +2,7 @@ import {React,useEffect }from 'react'
 import { FaEdit, FaTrashAlt,FaMapMarkerAlt } from "react-icons/fa";
 import { useSelector,useDispatch } from 'react-redux';
 import moment from 'moment';
-import { fetchEvents } from '../../store/slices/eventSlice';
+import { fetchEvents,deleteEvent,userRsvpRequest } from '../../store/slices/eventSlice';
 
 
 
@@ -10,9 +10,11 @@ import { fetchEvents } from '../../store/slices/eventSlice';
 
 function EventCard() {
 
+  const user = useSelector((store) => store.authSlice.user);
   const events = useSelector((store) => store.eventSlice.events);
   const loading = useSelector((store) => store.eventSlice.loading);
   const error = useSelector((store) => store.eventSlice.error);
+
   
   const dispatch = useDispatch();
   console.log(events,"event");
@@ -21,6 +23,12 @@ function EventCard() {
 
   const eventsData = events
   console.log(eventsData,"eventsData");
+
+  console.log(user.data.id,"userid");
+
+  const userId = user.data.id
+
+  
 
 
 
@@ -36,6 +44,30 @@ function EventCard() {
       dispatch(fetchEvents())
   }
 },[])
+
+const onClickDeleteHandler = (eventId)=>{
+  
+  console.log(eventId,"eventId");
+
+  dispatch(deleteEvent(eventId))
+
+}
+
+const rsvpClickHandler = (eventId)=>{
+
+  console.log(eventId,"eventId");
+  console.log(userId,'userId');
+
+  // Add your RSVP logic here
+  // Replace this with your API call or Redux state update logic
+  const rsvpIds = {
+    eventId: eventId,
+    userId: userId
+  }
+  dispatch(userRsvpRequest(rsvpIds))
+
+
+};
 
   
 
@@ -81,26 +113,37 @@ function EventCard() {
          {event.location}
          </a>
          </h6>
-         <p className="card-text">RSVPs: {event.rsvps}</p>
+         <p className="card-text">RSVPs: {event.rsvpCount}</p>
 
          {/* RSVP Button */}
-         <button className="btn btn-success mt-4">RSVP</button>
+         {
+            event.createdBy===userId?null:
+            <button className="btn btn-success mt-4"
+             onClick={()=>rsvpClickHandler(event._id)}
+            >RSVP</button>
+         }
+
+         
 
          {/* Update and Delete Icons */}
+         {event.createdBy===userId?
          <div className="mt-3 d-flex justify-content-end">
-           <button
-             className="btn btn-outline-primary me-2"
-             onClick={() => alert("Update functionality here")}
-           >
-             <FaEdit /> Update
-           </button>
-           <button
-             className="btn btn-outline-danger"
-             onClick={() => alert("Delete functionality here")}
-           >
-             <FaTrashAlt /> Delete
-           </button>
-         </div>
+         <button
+           className="btn btn-outline-primary me-2"
+           onClick={()=>alert('Delete Clicked')}
+         >
+           <FaEdit /> Update
+         </button>
+         <button
+           className="btn btn-outline-danger"
+           onClick={()=>onClickDeleteHandler(event._id)}
+         >
+           <FaTrashAlt /> Delete
+         </button>
+       </div>:null
+         }
+
+         
        </div>
      </div>
    </div>
