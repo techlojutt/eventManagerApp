@@ -1,13 +1,16 @@
 import React from 'react'
 import { NavLink,Link, useNavigate } from 'react-router';
 import { SiEventstore } from "react-icons/si";
+import { useDispatch } from 'react-redux';
+import { logout } from '../../store/slices/authSlice';
 
 
 function NavBar() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
  const handleLogout = (e)=>{
-   localStorage.removeItem('token')
+    dispatch(logout())
    navigate('/login')
  }
   return (
