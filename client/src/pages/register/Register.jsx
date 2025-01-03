@@ -13,14 +13,8 @@ function Register() {
 
     const handleSubmit=(e)=>{
 
-      // Add a check to ensure the image is in a valid format before uploading it.
-
-      // For the purpose of this demo, we'll just check if the image is a JPEG or PNG file.
-
-      
 
         e.preventDefault()
-        console.log(image,"submit")
        let user={
         name,email,password,image}
         

@@ -18,33 +18,21 @@ const api = axios.create({
 export const validateToken = createAsyncThunk(
     "auth/validateToken",
     async (_, { rejectWithValue }) => {
-
-        const token = localStorage.getItem("token"); // Get the token from localStorage
+        const token = localStorage.getItem("token");
         try {
-
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/validateToken`,{
                 headers: {
-                    Authorization:token, // Set the token in the header
+                    Authorization:token,
                 },
-            } )
-            console.log(response.data, "response user"); // Log the response
-            const user = response.data; // Extract user data from response
-            console.log(user, "user"); // Log the user data
-            console.log(user.data.imageURL, "user"); // Log the user data
-            const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID; // Bucket ID from environment variables
-            user.data.imageURL = storage.getFileView(bucketId,user.data.imageURL); // Add the image URL to the response data
-            console.log(user, "user"); // Log the user data
-            return user; // Return the user data
-
-
-            
+            })
+            const user = response.data;
+            const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID;
+            user.data.imageURL = storage.getFileView(bucketId,user.data.imageURL);
+            return user;
         } catch (error) {
-            // Handle errors by rejecting with the error message
             return rejectWithValue(
                 error.response?.data?.message || error.message
             );
-
-            
         }
     }
 )
@@ -54,15 +42,12 @@ export const registerUser = createAsyncThunk(
     "auth/registerUser",
     async (data, { rejectWithValue }) => {
         try {
-            const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID; // Bucket ID from environment variables
-            const file = data.image; // Image file provided in the request
-            const imageId = ID.unique(); // Generate a unique ID for the image
+            const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID;
+            const file = data.image;
+            const imageId = ID.unique();
 
-            // Upload the file to storage
             const promise = await storage.createFile(bucketId, imageId, file);
-            console.log(promise.$id, "created"); // Log the uploaded file ID
 
-            // Prepare user data including the uploaded image URL
             let userData = {
                 email: data.email,
                 password: data.password,
@@ -70,19 +55,11 @@ export const registerUser = createAsyncThunk(
                 imageURL: promise.$id,
             };
 
-            console.log(userData); // Log the user data being sent
-            const response = await api.post("/auth/register", userData); // API call to register user
-
-            toast.success(response.data.message); // Display success message
-            console.log(response.data, "response user"); // Log the response
-
-            
-
-           response.data.imageURL = storage.getFileView(bucketId,response.data.imageURL); // Add the image URL to the response data
-
-            return response.data; // Return the response data
+            const response = await api.post("/auth/register", userData);
+            toast.success(response.data.message);
+            response.data.imageURL = storage.getFileView(bucketId,response.data.imageURL);
+            return response.data;
         } catch (error) {
-            // Handle errors by rejecting with the error message
             return rejectWithValue(
                 error.response?.data?.message || error.message
             );
@@ -95,25 +72,14 @@ export const loginUser = createAsyncThunk(
     "auth/login",
     async (data, { rejectWithValue }) => {
         try {
-            console.log(data); // Log the login data being sent
-            const response = await api.post("/auth/login", data); // API call to log in user
-
-            const user = response.data; // Extract user data from response
-            console.log(user, "user"); // Log the user data
-            console.log(user.data.imageURL, "user"); // Log the user data
-            const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID; // Bucket ID from environment variables
-            user.data.imageURL = storage.getFileView(bucketId,user.data.imageURL); // Add the image URL to the response data
-            console.log(user, "user"); // Log the user data
-
-            // Save the token to localStorage
+            const response = await api.post("/auth/login", data);
+            const user = response.data;
+            const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID;
+            user.data.imageURL = storage.getFileView(bucketId,user.data.imageURL);
             localStorage.setItem("token", user.data.token);
-            console.log(user.data.token, "token"); // Log the token
-            toast.success("User logged in successfully"); // Display success message
-            console.log(user, "response user"); // Log the response
-
-            return user; // Return the user data
+            toast.success("User logged in successfully");
+            return user;
         } catch (error) {
-            // Handle errors by rejecting with the error message
             return rejectWithValue(
                 error.response?.data?.message || error.message
             );

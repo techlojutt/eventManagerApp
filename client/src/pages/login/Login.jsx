@@ -13,7 +13,6 @@ function Login() {
       e.preventDefault()
      let user={
       email , password}
-      console.log(user,'user')
       dispatch(loginUser(user))
 
       setEmail('')

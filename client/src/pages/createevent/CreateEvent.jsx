@@ -15,10 +15,6 @@ function CreateEvents() {
   const dispatch = useDispatch()
 
   const updateEventById = useSelector((store) => store.eventSlice.updateEvents)
-  if(updateEventById){
-    console.log(updateEventById,"updateEventById");
-  }
-  // console.log(updateEventById._id,"updatedEventById");
 
   useEffect(() => {
     if (updateEventById) {
@@ -37,9 +33,6 @@ function CreateEvents() {
       setLocation("")
       setVisibility("")
     }
-
-
-
   }, [updateEvent])
   
   const handleSubmit = (e) => {
@@ -68,8 +61,7 @@ function CreateEvents() {
       location,
       visibility, 
     }
-    
-    console.log(event)
+  
     dispatch(createEvent(event))
 
    }
