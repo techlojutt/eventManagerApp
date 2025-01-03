@@ -2,7 +2,9 @@ import {React,useEffect }from 'react'
 import { FaEdit, FaTrashAlt,FaMapMarkerAlt } from "react-icons/fa";
 import { useSelector,useDispatch } from 'react-redux';
 import moment from 'moment';
-import { fetchEvents,deleteEvent,userRsvpRequest } from '../../store/slices/eventSlice';
+import {useNavigate} from 'react-router';
+import { fetchEvents,deleteEvent,userRsvpRequest,updateEventById} from '../../store/slices/eventSlice';
+
 
 
 
@@ -14,6 +16,8 @@ function EventCard() {
   const events = useSelector((store) => store.eventSlice.events);
   const loading = useSelector((store) => store.eventSlice.loading);
   const error = useSelector((store) => store.eventSlice.error);
+
+  const navigate = useNavigate();
 
   
   const dispatch = useDispatch();
@@ -68,6 +72,19 @@ const rsvpClickHandler = (eventId)=>{
 
 
 };
+
+
+const onClickUpdateHandler = (eventId)=>{
+  console.log(eventId,"eventId");
+
+  // Add your Update logic here
+  // Replace this with your API call or Redux state update logic
+  dispatch(updateEventById(eventId))
+
+
+  navigate('/createevent')
+
+}
 
   
 
@@ -130,7 +147,7 @@ const rsvpClickHandler = (eventId)=>{
          <div className="mt-3 d-flex justify-content-end">
          <button
            className="btn btn-outline-primary me-2"
-           onClick={()=>alert('Delete Clicked')}
+           onClick={()=>onClickUpdateHandler(event._id)}
          >
            <FaEdit /> Update
          </button>

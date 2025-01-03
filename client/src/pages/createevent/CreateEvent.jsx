@@ -1,20 +1,64 @@
-import{React,useState }from 'react'
+import{React,useState,useEffect }from 'react'
 import { useDispatch,useSelector } from 'react-redux'
-import { createEvent } from '../../store/slices/eventSlice'
+import { createEvent,updateEvent,resetUpdateEventId } from '../../store/slices/eventSlice'
 import { optionValuesOfCategories } from '../../constants/constants'
+
 
 
 function CreateEvents() {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [image, setImage] = useState('')
+  const [image, setImage] = useState("")
   const [category, setCategory] = useState("")
   const [location, setLocation] = useState("")
   const [visibility, setVisibility] = useState("")
   const dispatch = useDispatch()
+
+  const updateEventById = useSelector((store) => store.eventSlice.updateEvents)
+  if(updateEventById){
+    console.log(updateEventById,"updateEventById");
+  }
+  // console.log(updateEventById._id,"updatedEventById");
+
+  useEffect(() => {
+    if (updateEventById) {
+      setTitle(updateEventById.title)
+      setDescription(updateEventById.description)
+      setImage(updateEventById.image)
+      setCategory(updateEventById.category)
+      setLocation(updateEventById.location)
+      setVisibility(updateEventById.visibility)
+    }
+    else {
+      setTitle("")
+      setDescription("")
+      setImage("")
+      setCategory("")
+      setLocation("")
+      setVisibility("")
+    }
+
+
+
+  }, [updateEvent])
   
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    if(updateEventById) {
+
+    let updatedEvent = {
+      title,
+      description,
+      image,
+      category,
+      location,
+      visibility,
+      id:updateEventById._id
+    }
+    dispatch(updateEvent(updatedEvent))
+  }
+   else{
 
     let event = {
       title,
@@ -28,12 +72,24 @@ function CreateEvents() {
     console.log(event)
     dispatch(createEvent(event))
 
-    setTitle(""),
-    setDescription(""),
-    setImage(null),
-    setCategory(""),
-    setLocation(""),
-    setVisibility("")
+   }
+
+
+
+   setTitle(""),
+   setDescription(""),
+   setImage(""),
+   setCategory(""),
+   setLocation(""),
+   setVisibility("")
+   dispatch(resetUpdateEventId())
+
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImage(file)
   }
 
   
@@ -120,7 +176,6 @@ function CreateEvents() {
             required
           >
             <option value="" disabled>Select a category</option>
-            <option value="music">Music</option>
            { optionValuesOfCategories?.map((category,index) => {
             return <option key={index} value={category}>{category}</option>
             })}
@@ -131,13 +186,13 @@ function CreateEvents() {
       {/* Image Upload */}
       <div className="mb-3">
         <label htmlFor="image" className="form-label">
-          Upload Image
+          {updateEventById?'Update':'Upload'} Image
         </label>
         <input
           type="file"
           className="form-control"
           id="image"
-          onChange={(e) => setImage(e.target.files[0])}
+          onChange={handleImageChange}
           required
         />
       </div>
@@ -145,7 +200,7 @@ function CreateEvents() {
       {/* Submit Button */}
       <div className="d-grid">
         <button type="submit" className="btn btn-primary">
-          Create Event
+          {updateEventById?'Update':'Create'} Event
         </button>
       </div>
     </form>

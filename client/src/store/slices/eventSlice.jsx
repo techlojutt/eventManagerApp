@@ -41,7 +41,39 @@ export const userRsvpRequest = createAsyncThunk(
 export const updateEvent = createAsyncThunk(
     "event/updateEvent",
      async (eventData, { rejectWithValue }) => {
-        
+        console.log(eventData,"eventData");
+        const eventId = eventData.id; // Example event ID: 676d5eff
+      
+        // console.log(updatedEvent,"updatedEvent");
+        const bucketId = import.meta.env.VITE_APPWRITE_BUCKETID;
+        const file = eventData.image;
+        const imageId = ID.unique();
+        const promise = await storage.createFile(bucketId, imageId, file);
+        const updatedEvent = {
+            title: eventData.title,
+            description: eventData.description,
+            location: eventData.location,
+            category: eventData.category,
+            visibility: eventData.visibility,
+            image: promise.$id,
+        };
+        try {
+            const response = await api.put(`/events/update/${eventId}`,{
+                title: updatedEvent.title,
+                description: updatedEvent.description,
+                location: updatedEvent.location,
+                category: updatedEvent.category,
+                visibility: updatedEvent.visibility,
+                image: updatedEvent.image,
+            }); // Axios PUT request
+            console.log(response.data,'response data...'); // Log the updated event
+            toast.success(response.data.message); // Success notification
+            return eventData; // Return the updated event ID
+        } catch (error) {
+            console.error("Error updating event:", error);
+            toast.error(error.response?.data?.message || error.message); // Error notification
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }   
      }
 )
 
@@ -102,8 +134,9 @@ export const createEvent = createAsyncThunk(
 
             const state = getState();
             console.log(state,"state");
-            console.log(state.auth.user,"auth.user");
-            console.log(state.auth.user.data.id,"auth.user.data.id");
+            console.log(state.authSlice.user,"authSlice.data");
+            console.log(state.authSlice.user.data.id,"auth.user.data.id");
+            // console.log(state.auth.user.data.id,"auth.user.data.id");
 
 
             // Upload the image to Appwrite Storage
@@ -120,7 +153,7 @@ export const createEvent = createAsyncThunk(
                 location: eventData.location,
                 category: eventData.category,
                 visibility: eventData.visibility,
-                createdBy: "676d5effebe0eccac7b02c06", // Example user ID
+                createdBy: state.authSlice.user.data.id, // Example user ID
                 image: promise.$id, // Store the uploaded image ID
             };
 
@@ -149,9 +182,24 @@ const eventSlice = createSlice({
         events: [],
         loading: false,
         error: null,
+        updateEvents: null,
     },
     reducers: {
         // Add any custom reducers here
+        updateEventById :(state,action)=>{
+            console.log("updateId",action.payload);
+            let updateEventById = state.events.find(event => event._id === action.payload);
+
+            state.updateEvents = updateEventById;
+           
+
+        },
+        resetUpdateEventId :(state,action)=>{
+            state.updateEvents = null;
+        }
+
+
+
     },
     extraReducers: (builder) => {
         builder.addCase(fetchEvents.pending, (state) => {
@@ -188,8 +236,35 @@ const eventSlice = createSlice({
             state.loading = false;
             state.error = action.payload;
         });
+        builder.addCase(updateEvent.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(updateEvent.fulfilled, (state, action) => {
+            console.log(action.payload,"action.payload");
+            state.loading = false;
+            state.events = state.events.map((event) => 
+                event._id === action.payload.id ?
+                 {
+                    ...event,
+                    title: action.payload.title,
+                    description: action.payload.description,
+                    location: action.payload.location,
+                    category: action.payload.category,
+                    visibility: action.payload.visibility,
+                    image: action.payload.image, // Replace the image ID with the image URL
+                 }
+                : event       
+            ); // Update the event
+        });
+        builder.addCase(updateEvent.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
     },
 
 });
+
+// Export the custom reducers
+export const { updateEventById, resetUpdateEventId } = eventSlice.actions;
 
 export default eventSlice.reducer;
