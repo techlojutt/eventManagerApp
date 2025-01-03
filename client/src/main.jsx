@@ -4,8 +4,6 @@ import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { store } from './store/store.jsx';
-
-
 import React from "react";
 import './index.css'
 import App from './App.jsx'
