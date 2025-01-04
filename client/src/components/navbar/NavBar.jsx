@@ -3,6 +3,7 @@ import { NavLink,Link, useNavigate } from 'react-router';
 import { SiEventstore } from "react-icons/si";
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
+import './navbar.css'
 
 
 function NavBar() {

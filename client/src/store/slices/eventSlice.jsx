@@ -44,6 +44,7 @@ export const updateEvent = createAsyncThunk(
             location: eventData.location,
             category: eventData.category,
             visibility: eventData.visibility,
+            eventDate: eventData.date,
             image: promise.$id,
         };
         try {
@@ -113,6 +114,7 @@ export const createEvent = createAsyncThunk(
                 category: eventData.category,
                 visibility: eventData.visibility,
                 createdBy: state.authSlice.user.data.id,
+                eventDate: eventData.date,
                 image: promise.$id,
             };
 

@@ -14,6 +14,8 @@ import Login from './pages/login/Login';
 import Profile from './pages/profile/Profile';
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
+import About from './pages/about/About';
+import Contact from './pages/contact/Contact';
 
 function App() {
 
@@ -34,7 +36,9 @@ function App() {
              <Route path="/createevent" element={<CreateEvent/>}/>
              <Route path="/profile" element={<Profile/>}/>
              <Route path="/policy" element={<Policy/>}/>
+             <Route path="/about" element={<About/>}/>
              <Route path="*" element={<PageNotFound/>}/>
+             <Route path="/contact" element={<Contact/>}/>
           </Route>
           <Route path="/register" element={<PublicRoute><Register/></PublicRoute>}/>
           <Route path="/login" element={<PublicRoute><Login/></PublicRoute>}/>

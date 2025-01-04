@@ -12,6 +12,7 @@ function CreateEvents() {
   const [category, setCategory] = useState("")
   const [location, setLocation] = useState("")
   const [visibility, setVisibility] = useState("")
+  const [date, setDate] = useState("")
   const dispatch = useDispatch()
 
   const updateEventById = useSelector((store) => store.eventSlice.updateEvents)
@@ -24,6 +25,7 @@ function CreateEvents() {
       setCategory(updateEventById.category)
       setLocation(updateEventById.location)
       setVisibility(updateEventById.visibility)
+      setDate(updateEventById.date)
     }
     else {
       setTitle("")
@@ -32,6 +34,7 @@ function CreateEvents() {
       setCategory("")
       setLocation("")
       setVisibility("")
+      setDate("")
     }
   }, [updateEvent])
   
@@ -47,7 +50,8 @@ function CreateEvents() {
       category,
       location,
       visibility,
-      id:updateEventById._id
+      id:updateEventById._id,
+      date
     }
     dispatch(updateEvent(updatedEvent))
   }
@@ -60,7 +64,9 @@ function CreateEvents() {
       category,
       location,
       visibility, 
+      date
     }
+    console.log(event)
   
     dispatch(createEvent(event))
 
@@ -74,6 +80,7 @@ function CreateEvents() {
    setCategory(""),
    setLocation(""),
    setVisibility("")
+   setDate("")
    dispatch(resetUpdateEventId())
 
   }
@@ -90,9 +97,9 @@ function CreateEvents() {
     <div className="event-form-container p-5 bg-white rounded shadow-lg w-75">
     <h2 className="text-center text-primary mb-4">Create Event</h2>
     <form onSubmit={handleSubmit} encType="multipart/form-data">
-      {/* Title and Location (Two Fields in One Row) */}
+      {/* Title, Location and Date (Three Fields in One Row) */}
       <div className="row">
-        <div className="col-md-6 mb-3">
+        <div className="col-md-4 mb-3">
           <label htmlFor="title" className="form-label">
             Title
           </label>
@@ -106,7 +113,7 @@ function CreateEvents() {
             required
           />
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-md-4 mb-3">
           <label htmlFor="location" className="form-label">
             Location
           </label>
@@ -119,6 +126,33 @@ function CreateEvents() {
             placeholder="Enter event location"
             required
           />
+        </div>
+        <div className="col-md-4 mb-3">
+          <label htmlFor="date" className="form-label">
+            Event Date
+          </label>
+          <input
+            type="datetime-local"
+            className="form-control"
+            id="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            min={new Date().toISOString().slice(0, 16)}
+            style={{
+              cursor: 'pointer',
+              backgroundColor: '#fff',
+              border: '1px solid #ced4da',
+              borderRadius: '4px',
+              padding: '0.375rem 0.75rem',
+              transition: 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out'
+            }}
+            onFocus={(e) => e.target.style.borderColor = '#86b7fe'}
+            onBlur={(e) => e.target.style.borderColor = '#ced4da'}
+            required
+          />
+          <small className="text-muted">
+            Select a future date and time for your event
+          </small>
         </div>
       </div>
 

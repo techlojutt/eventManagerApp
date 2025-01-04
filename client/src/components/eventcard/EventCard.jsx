@@ -14,6 +14,14 @@ function EventCard() {
   const dispatch = useDispatch();
   const eventsData = events
   const userId = user.data.id
+  const userEmail = user.data.email
+  const userName = user.data.name
+  
+
+  console.log(eventsData)
+
+  
+
 
   useEffect(() =>{
     if(eventsData.length === 0){
@@ -25,10 +33,13 @@ function EventCard() {
     dispatch(deleteEvent(eventId))
   }
 
-  const rsvpClickHandler = (eventId)=>{
+  const rsvpClickHandler = (eventId,eventDate)=>{
     const rsvpIds = {
       eventId: eventId,
-      userId: userId
+      userId: userId,
+      email: userEmail,
+      name: userName,
+      eventDate: eventDate,
     }
     dispatch(userRsvpRequest(rsvpIds))
   }
@@ -59,7 +70,8 @@ function EventCard() {
                   <h2 className="h5 card-title font-weight-bold">
                     {event.title}
                   </h2>
-                  <p className="card-text">Date: {moment(event.createdAt).format("MMMM Do, YYYY")}</p>
+                  <p className="card-text">Event Date: {moment(event.eventDate).format("MMMM Do, YYYY")}</p>
+                  <p className="card-text text-muted">Created: {moment(event.createdAt).format("MMMM Do, YYYY")}</p>
                   <h6 className="card-text">
                     <FaMapMarkerAlt className="me-2 text-danger" />
                     Location: &nbsp;
@@ -77,7 +89,7 @@ function EventCard() {
                   {
                     event.createdBy===userId?null:
                     <button className="btn btn-success mt-4"
-                      onClick={()=>rsvpClickHandler(event._id)}
+                      onClick={()=>rsvpClickHandler(event._id,event.eventDate)}
                     >RSVP</button>
                   }
                   {event.createdBy===userId?

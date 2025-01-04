@@ -1,0 +1,8 @@
+.nav-item{
+  list-style: none;
+  text-decoration: none;
+
+}
+.nav-item:before{
+    content: "";  
+}
