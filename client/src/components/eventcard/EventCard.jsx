@@ -34,14 +34,18 @@ function EventCard() {
   }
 
   const rsvpClickHandler = (eventId,eventDate)=>{
-    const rsvpIds = {
+    console.log(eventId,"eventId")
+    console.log(eventDate,"eventDate")
+    console.log(userId,"userId")
+    const rsvpData = {
       eventId: eventId,
       userId: userId,
       email: userEmail,
       name: userName,
       eventDate: eventDate,
     }
-    dispatch(userRsvpRequest(rsvpIds))
+    console.log(rsvpData,"rsvpData")
+    dispatch(userRsvpRequest(rsvpData))
   }
 
   const onClickUpdateHandler = (eventId)=>{

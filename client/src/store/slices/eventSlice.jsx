@@ -16,11 +16,13 @@ const api = axios.create({
 
 export const userRsvpRequest = createAsyncThunk(
     "event/rsvps",
-    async (id, { rejectWithValue }) => {
-        const eventId = id.eventId;
-        const userId = id.userId;
+    async (data, { rejectWithValue }) => {
+        const eventId = data.eventId;
+        const userId = data.userId;
+        
+      
         try {
-            const response = await api.post(`/events/rsvp/${eventId}`, {userId});
+            const response = await api.post(`/events/rsvp/${eventId}`, userId);
             toast.success(response.data.message);
             return eventId;
         } catch (error) {
@@ -204,6 +206,19 @@ const eventSlice = createSlice({
             );
         });
         builder.addCase(updateEvent.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+        builder.addCase(userRsvpRequest.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(userRsvpRequest.fulfilled, (state, action) => {
+            state.loading = false;
+            state.events = state.events.map((event) => 
+                event._id === action.payload ? { ...event, rsvp: true } : event
+            );
+        });
+        builder.addCase(userRsvpRequest.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
         });

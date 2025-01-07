@@ -4,7 +4,7 @@ import './Policy.css';
 function Policy() {
   return (
     <div className="policy-container">
-      <h1 className="policy-title">Privacy Policy</h1>
+      <h2 className="policy-title">Privacy Policy</h2>
       
       <section className="policy-section">
         <h2>1. Introduction</h2>
